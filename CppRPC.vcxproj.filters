@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="base">
+      <UniqueIdentifier>{5398a1ac-3194-44fe-8762-0e4ba88321d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{3ea4b564-c5e8-415f-9881-ce5f03c40eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{61fb8b47-98b1-40d4-80e7-f504734fe206}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="net\win">
+      <UniqueIdentifier>{c1ea425b-6815-4276-a3b0-ca3c5cf7e0c2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="base\Buffer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\Log.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\LoopBuffer.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\MemaryPool.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="base\TimeTool.cpp">
+      <Filter>base</Filter>
+    </ClCompile>
+    <ClCompile Include="net\NetObject.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\OSInfo.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\Timer.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="net\win\AcceptSocket.cpp">
+      <Filter>net\win</Filter>
+    </ClCompile>
+    <ClCompile Include="net\win\IOCP.cpp">
+      <Filter>net\win</Filter>
+    </ClCompile>
+    <ClCompile Include="net\win\IOCPImpl.cpp">
+      <Filter>net\win</Filter>
+    </ClCompile>
+    <ClCompile Include="net\win\Socket.cpp">
+      <Filter>net\win</Filter>
+    </ClCompile>
+    <ClCompile Include="net\win\SocketBase.cpp">
+      <Filter>net\win</Filter>
+    </ClCompile>
+    <ClCompile Include="rpc\FuncManager.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="rpc\FuncThread.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="rpc\InfoRouter.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="rpc\ParsePackage.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="rpc\test.cpp">
+      <Filter>rpc</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="base\Buffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Log.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\LoopBuffer.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\MemaryPool.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\PoolSharedPtr.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Runnable.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\RunnableAloneTaskList.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\RunnableAloneTaskListWithPost.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\RunnableShareTaskList.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Single.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\TaskQueue.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="base\TimeTool.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="net\AcceptSocket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\EventActions.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\EventHandler.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\NetObject.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\OSInfo.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\Socket.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\SocketBase.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\Timer.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="net\win\IOCP.h">
+      <Filter>net\win</Filter>
+    </ClInclude>
+    <ClInclude Include="net\win\IOCPImpl.h">
+      <Filter>net\win</Filter>
+    </ClInclude>
+    <ClInclude Include="net\win\WinExpendFunc.h">
+      <Filter>net\win</Filter>
+    </ClInclude>
+    <ClInclude Include="rpc\FuncManager.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="base\Any.h">
+      <Filter>base</Filter>
+    </ClInclude>
+    <ClInclude Include="rpc\FuncThread.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="rpc\InfoRouter.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="rpc\ParsePackage.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
