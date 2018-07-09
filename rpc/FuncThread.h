@@ -3,11 +3,7 @@
 
 #include "RunnableAloneTaskList.h"
 #include "FuncManager.h"
-
-struct FuncCallInfo {
-	std::string			_func_name;
-	std::vector<CAny>	_func_param_ret;
-};
+#include "CommonStruct.h"
 
 class CFuncManager;
 class CInfoRouter;
@@ -17,7 +13,7 @@ public:
 	CFuncThread(CInfoRouter* router);
 	~CFuncThread();
 
-	//main loog
+	//main loop
 	virtual void Run();
 
 	virtual void Stop();

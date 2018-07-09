@@ -13,6 +13,9 @@
     <Filter Include="net\win">
       <UniqueIdentifier>{c1ea425b-6815-4276-a3b0-ca3c5cf7e0c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="net\linux">
+      <UniqueIdentifier>{cd493853-0ef5-4d2d-b8c9-7973a0717ed7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\Buffer.cpp">
@@ -45,9 +48,6 @@
     <ClCompile Include="net\win\IOCP.cpp">
       <Filter>net\win</Filter>
     </ClCompile>
-    <ClCompile Include="net\win\IOCPImpl.cpp">
-      <Filter>net\win</Filter>
-    </ClCompile>
     <ClCompile Include="net\win\Socket.cpp">
       <Filter>net\win</Filter>
     </ClCompile>
@@ -68,6 +68,21 @@
     </ClCompile>
     <ClCompile Include="rpc\test.cpp">
       <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="net\linux\AcceptSocket.cpp">
+      <Filter>net\linux</Filter>
+    </ClCompile>
+    <ClCompile Include="net\linux\CEpoll.cpp">
+      <Filter>net\linux</Filter>
+    </ClCompile>
+    <ClCompile Include="net\linux\LinuxFunc.cpp">
+      <Filter>net\linux</Filter>
+    </ClCompile>
+    <ClCompile Include="net\linux\Socket.cpp">
+      <Filter>net\linux</Filter>
+    </ClCompile>
+    <ClCompile Include="net\linux\SocketBase.cpp">
+      <Filter>net\linux</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -134,9 +149,6 @@
     <ClInclude Include="net\win\IOCP.h">
       <Filter>net\win</Filter>
     </ClInclude>
-    <ClInclude Include="net\win\IOCPImpl.h">
-      <Filter>net\win</Filter>
-    </ClInclude>
     <ClInclude Include="net\win\WinExpendFunc.h">
       <Filter>net\win</Filter>
     </ClInclude>
@@ -154,6 +166,15 @@
     </ClInclude>
     <ClInclude Include="rpc\ParsePackage.h">
       <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="rpc\CommonStruct.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="net\linux\CEpoll.h">
+      <Filter>net\linux</Filter>
+    </ClInclude>
+    <ClInclude Include="net\linux\LinuxFunc.h">
+      <Filter>net\linux</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

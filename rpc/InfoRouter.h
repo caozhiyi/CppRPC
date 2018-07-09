@@ -11,7 +11,6 @@
 
 struct FuncCallInfo;
 class CFuncThread;
-
 class CInfoRouter
 {
 public:

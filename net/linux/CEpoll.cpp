@@ -46,7 +46,7 @@ bool CEpoll::Init() {
 
 bool CEpoll::Dealloc() {
 	_run = false;
-	WeakUp();
+	WakeUp();
 	return true;
 }
 
@@ -198,11 +198,13 @@ void CEpoll::ProcessEvent() {
 		if (res > 0) {
 			LOG_DEBUG("epoll_wait get events! num :%d, TheadId : %d", res, std::this_thread::get_id());
 			_DoEvent(event_vec, res);
+			_DoTaskList()
 
 		} else {
 			if (!timer_vec.empty()) {
 				_DoTimeoutEvent(timer_vec);
 			}
+			_DoTaskList()
 		}
 	}
 
@@ -217,7 +219,15 @@ void CEpoll::ProcessEvent() {
 	}
 }
 
-void CEpoll::WeakUp() {
+void CEpoll::PostTask(std::function<void(void)>& task) {
+	{
+		std::unique_lock<std::mutex> lock(_mutex);
+		_task_list.push_back(task);
+	}
+	WakeUp();
+}
+
+void CEpoll::WakeUp() {
 	write(_pipe[1], "0", 1);
 }
 
@@ -347,6 +357,18 @@ void CEpoll::_DoEvent(std::vector<epoll_event>& event_vec, int num) {
 				}
 			}
 		}
+	}
+}
+
+void CEpoll::_DoTaskList() {
+	std::vector<std::function<void(void)>> func_vec;
+	{
+		std::unique_lock<std::mutex> lock(_mutex);
+		func_vec.swap(_task_list);
+	}
+
+	for (size_t i = 0; i < func_vec.size(); ++i) {
+		func_vec[i]();
 	}
 }
 #endif // __linux__

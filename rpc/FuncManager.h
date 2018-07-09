@@ -1,5 +1,23 @@
 #ifndef HEADER_CFUNCMANAGER
 #define HEADER_CFUNCMANAGER
+/***************************************
+define a function to string:
+type info:
+i	int
+c	char
+s	string
+d	double
+l	long
+b	bool
+vi	vector<int>
+vc	vector<char>
+...
+string function format:
+return_type_list(param_type_list)
+for example:
+bbi(ii)	means params are two int that
+return are two bool and one int
+****************************************/
 
 #include <functional>
 #include <vector>
@@ -7,26 +25,7 @@
 #include <mutex>
 
 #include "Any.h"
-
-/***************************************
-define a function to string:
-type info:
-	i	int
-	c	char
-	s	string
-	d	double
-	l	long
-	b	bool
-	vi	vector<int>
-	vc	vector<char>...
-string function format:
-	return type list(param type list)
-for example:
-	bbi(ii)	means param is two int that 
-	return is two bool and one int
-****************************************/
-
-typedef std::function<std::vector<CAny>(std::vector<CAny>)> CommonFunc;
+#include "CommonStruct.h"
 
 class CFuncManager
 {
