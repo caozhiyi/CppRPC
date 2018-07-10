@@ -44,13 +44,13 @@ public:
 	//get message type: function call. return. info.
 	bool ParseType(char* buf, int len, int& type);
 	//parase for every type
-	bool ParseFuncRet(char* buf, int len, int& code, std::string& func_name, const std::string& func_str, std::vector<CAny>& res);
-	bool ParseFuncCall(char* buf, int len, std::string& func_name, const std::string& func_str, std::vector<CAny>& res);
+	bool ParseFuncRet(char* buf, int len, int& code, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& res);
+	bool ParseFuncCall(char* buf, int len, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& res);
 	bool ParseFuncList(char* buf, int len, std::map<std::string, std::string>& map);
 	//package for every type
-	bool PackageFuncRet(char* buf, int& len, int code, const std::string& func_name, const std::string& func_str, std::vector<CAny>& ret);
-	bool PackageFuncCall(char* buf, int& len, std::string& func_name, const std::string& func_str, std::vector<CAny>& param);
-	bool PackageFuncList(char* buf, int& len, std::map<std::string, std::pair<std::string, CommonFunc>>& func_map);
+	bool PackageFuncRet(char* buf, int& len, int code, const std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& ret);
+	bool PackageFuncCall(char* buf, int& len, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& param);
+	bool PackageFuncList(char* buf, int& len, std::map<std::string, std::string>& func_map);
 
 private:
 	bool _ParseParam(char* buf, char type, std::vector<CAny>& res);

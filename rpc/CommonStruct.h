@@ -17,6 +17,8 @@ enum ERROR_CODE {
 	NO_ERROR			= 0,
 	PARAM_TYPE_ERROR	= 1,
 	PARAM_NUM_ERROR		= 2,
+	NO_FUNC_ERROR		= 3,
+	PARSE_FUNC_ERROR	= 4
 };
 
 class CAny;
@@ -25,7 +27,6 @@ struct FuncCallInfo {
 	std::string				_func_name;
 	std::vector<CAny>		_func_param_ret;
 
-	std::thread::id			_thread_id;
 	CMemWeakPtr<CSocket>	_socket;
 };
 

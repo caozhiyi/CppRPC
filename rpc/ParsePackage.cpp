@@ -37,7 +37,7 @@ bool CParsePackage::ParseType(char* buf, int len, int& type) {
 	return true;
 }
 
-bool CParsePackage::ParseFuncRet(char* buf, int len, int& code, std::string& func_name, const std::string& func_str, std::vector<CAny>& res) {
+bool CParsePackage::ParseFuncRet(char* buf, int len, int& code, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& res) {
 	if (!buf) {
 		return false;
 	}
@@ -46,6 +46,7 @@ bool CParsePackage::ParseFuncRet(char* buf, int len, int& code, std::string& fun
 	char* pos = nullptr;
 	char* cur = nullptr;
 
+	std::string func_str;
 	int state = PARSE_NAME;
 	int num = 0;
 	int index = 0;
@@ -67,9 +68,16 @@ bool CParsePackage::ParseFuncRet(char* buf, int len, int& code, std::string& fun
 		}
 		switch (state) {
 		case PARSE_NAME:
+		{
 			func_name = cur;
-			state = PARSE_CODE;
-			break;
+			auto iter = func_str_map.find(func_name);
+			if (iter != func_str_map.end()) {
+				func_str = iter->second;
+				state = PARSE_CODE;
+				break;
+			}
+			return false;
+		}
 
 		case PARSE_CODE:
 			code = atoi(cur);
@@ -105,7 +113,7 @@ bool CParsePackage::ParseFuncRet(char* buf, int len, int& code, std::string& fun
 	return true;
 }
 
-bool CParsePackage::ParseFuncCall(char* buf, int len, std::string& func_name, const std::string& func_str, std::vector<CAny>& res) {
+bool CParsePackage::ParseFuncCall(char* buf, int len, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& res) {
 	if (!buf) {
 		return false;
 	}
@@ -116,8 +124,8 @@ bool CParsePackage::ParseFuncCall(char* buf, int len, std::string& func_name, co
 
 	int state = PARSE_NAME;
 	int num = 0;
-
-	int index = func_str.find("(") + 1;
+	std::string func_str;
+	int index = 0;
 	for (;;) {
 		cur = next;
 		if (strcmp(cur, "\r\n\r\n") == 0) {
@@ -136,9 +144,18 @@ bool CParsePackage::ParseFuncCall(char* buf, int len, std::string& func_name, co
 		}
 		switch (state) {
 		case PARSE_NAME:
+		{
 			func_name = cur;
-			state = PARSE_NUM;
-			break;
+			auto iter = func_str_map.find(func_name);
+			if (iter != func_str_map.end()) {
+				func_str = iter->second;
+				state = PARSE_NUM;
+				index = func_str.find("(") + 1;
+				break;
+			}
+			return false;
+		}
+			
 		case PARSE_NUM:
 			num = atoi(cur);
 			state = PARSE_PARAM;
@@ -223,7 +240,7 @@ bool CParsePackage::ParseFuncList(char* buf, int len, std::map<std::string, std:
 	return false;
 }
 
-bool CParsePackage::PackageFuncRet(char* buf, int& len, int code, const std::string& func_name, const std::string& func_str, std::vector<CAny>& ret) {
+bool CParsePackage::PackageFuncRet(char* buf, int& len, int code, const std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& ret) {
 	if (!buf) {
 		return false;
 	}
@@ -232,6 +249,14 @@ bool CParsePackage::PackageFuncRet(char* buf, int& len, int code, const std::str
 	char* end = buf + len;
 	char* cur = buf;
 	int num = (int)ret.size();
+	std::string func_str;
+	auto iter = func_str_map.find(func_name);
+	if (iter != func_str_map.end()) {
+		func_str = iter->second;
+	
+	} else {
+		return false;
+	}
 	//type
 	if (!_SafeSprintf(false, cur, end, "%d|", FUNCTION_RET))
 		return false;
@@ -331,7 +356,7 @@ bool CParsePackage::PackageFuncRet(char* buf, int& len, int code, const std::str
 	return false;
 }
 
-bool CParsePackage::PackageFuncCall(char* buf, int& len, std::string& func_name, const std::string& func_str, std::vector<CAny>& param) {
+bool CParsePackage::PackageFuncCall(char* buf, int& len, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& param) {
 	if (!buf) {
 		return false;
 	}
@@ -340,6 +365,14 @@ bool CParsePackage::PackageFuncCall(char* buf, int& len, std::string& func_name,
 	char* end = buf + len;
 	char* cur = buf;
 	int num = (int)param.size();
+	std::string func_str;
+	auto iter = func_str_map.find(func_name);
+	if (iter != func_str_map.end()) {
+		func_str = iter->second;
+
+	} else {
+		return false;
+	}
 	//type
 	if (!_SafeSprintf(false, cur, end, "%d|", FUNCTION_CALL))
 		return false;
@@ -437,7 +470,7 @@ bool CParsePackage::PackageFuncCall(char* buf, int& len, std::string& func_name,
 	return false;
 }
 
-bool CParsePackage::PackageFuncList(char* buf, int& len, std::map<std::string, std::pair<std::string, CommonFunc>>& func_map) {
+bool CParsePackage::PackageFuncList(char* buf, int& len, std::map<std::string, std::string>& func_map) {
 	if (!buf) {
 		return false;
 	}
@@ -459,7 +492,7 @@ bool CParsePackage::PackageFuncList(char* buf, int& len, std::map<std::string, s
 			return false;
 		cur += strlen(cur);
 
-		if (!_SafeSprintf(false, cur, end, "%s|", iter->second.first.c_str()))
+		if (!_SafeSprintf(false, cur, end, "%s|", iter->second.c_str()))
 			return false;
 		cur += strlen(cur);
 	}

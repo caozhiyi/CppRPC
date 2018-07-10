@@ -9,15 +9,12 @@ CInfoRouter::CInfoRouter() {
 CInfoRouter::~CInfoRouter() {
 }
 
-void CInfoRouter::Init(int thread_num) {
-	for (int i = 0; i < thread_num; i++ ) {
-		std::shared_ptr<CFuncThread> func_thread(new CFuncThread(this));
-		_func_thread_vec.push_back(func_thread);
-	}
+void CInfoRouter::AddThread(std::shared_ptr<CFuncThread>& thread) {
+	_func_thread_vec.push_back(thread);
 }
 
-void CInfoRouter::Destroy() {
-	for (int i = 0; i < _func_thread_vec.size(); i++) {
+void CInfoRouter::StopAllThread() {
+	for (int i = 0; i < (int)_func_thread_vec.size(); i++) {
 		_func_thread_vec[i]->Stop();
 		CRunnable::Sleep(100);
 	}
@@ -33,4 +30,20 @@ void CInfoRouter::PushTask(FuncCallInfo* info) {
 
 void CInfoRouter::PushRet(FuncCallInfo* info) {
 	_out_task_list.Push(info);
+}
+
+FuncCallInfo* CInfoRouter::GetRet() {
+	return _out_task_list.Pop();
+}
+
+void CInfoRouter::RegisterFunc(const std::string& name, const CommonFunc& func) {
+	for (int i = 0; i < (int)_func_thread_vec.size(); i++) {
+		_func_thread_vec[i]->RegisterFunc(name, func);
+	}
+}
+
+void CInfoRouter::RemoveFunc(const std::string& name) {
+	for (int i = 0; i < (int)_func_thread_vec.size(); i++) {
+		_func_thread_vec[i]->RemoveFunc(name);
+	}
 }

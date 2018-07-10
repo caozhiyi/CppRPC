@@ -100,6 +100,7 @@ void CSocket::SyncConnection(const std::string& ip, short port) {
 		return;
 	}
 	strcpy(_ip, ip.c_str());
+	_port = port;
 	if (!_read_event) {
 		_read_event = MakeNewSharedPtr<CEventHandler>(_pool.get());
 	}
@@ -216,6 +217,10 @@ void CSocket::SyncWrite(unsigned int interval, char* src, int len) {
 	}
 }
 
+void CSocket::PostTask(std::function<void(void)>& func) {
+	_event_actions->PostTask(func);
+}
+
 void CSocket::SetReadCallBack(const std::function<void(CMemSharePtr<CEventHandler>&, int error)>& call_back) {
 	_read_event->_call_back = call_back;
 }
@@ -319,10 +324,19 @@ void CSocket::_Send(CMemSharePtr<CEventHandler>& event) {
 		err = EVENT_ERROR_NO | event->_event_flag_set;
 		event->_off_set = 0;
 		if (event->_buffer && event->_buffer->GetCanReadSize()) {
-			char buf[65536] = { 0 };
+			char buf[8912] = { 0 };
 			int send_len = 0;
-			send_len = event->_buffer->Read(buf, 65536);
+			send_len = event->_buffer->Read(buf, 8912);
 			int res = send(socket_ptr->GetSocket(), buf, send_len, 0);
+			if (res > 0) {
+				event->_buffer->Clear(res);
+				//can send complete
+				if (res < send_len) {
+					_write_event->_event_flag_set |= EVENT_WRITE;
+					_event_actions->AddSendEvent(_write_event);
+				}
+			}
+
 			if (res < 0) {
 				if (errno == EWOULDBLOCK || errno == EAGAIN || errno == EINTR) {
 					//wait next time to do

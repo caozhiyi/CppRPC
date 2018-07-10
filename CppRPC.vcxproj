@@ -131,10 +131,11 @@
     <ClCompile Include="net\win\IOCP.cpp" />
     <ClCompile Include="net\win\Socket.cpp" />
     <ClCompile Include="net\win\SocketBase.cpp" />
-    <ClCompile Include="rpc\FuncManager.cpp" />
     <ClCompile Include="rpc\FuncThread.cpp" />
     <ClCompile Include="rpc\InfoRouter.cpp" />
     <ClCompile Include="rpc\ParsePackage.cpp" />
+    <ClCompile Include="rpc\RPCClient.cpp" />
+    <ClCompile Include="rpc\RPCServer.cpp" />
     <ClCompile Include="rpc\test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,10 +165,11 @@
     <ClInclude Include="net\win\IOCP.h" />
     <ClInclude Include="net\win\WinExpendFunc.h" />
     <ClInclude Include="rpc\CommonStruct.h" />
-    <ClInclude Include="rpc\FuncManager.h" />
     <ClInclude Include="rpc\FuncThread.h" />
     <ClInclude Include="rpc\InfoRouter.h" />
     <ClInclude Include="rpc\ParsePackage.h" />
+    <ClInclude Include="rpc\RPCClient.h" />
+    <ClInclude Include="rpc\RPCServer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
