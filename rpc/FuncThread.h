@@ -26,6 +26,7 @@ public:
 	bool CallFunc(const std::string& name, std::vector<CAny>& param_ret);
 
 private:
+
 	std::map<std::string, CommonFunc>	_func_map;
 	std::shared_ptr<CInfoRouter>		_func_router;
 };

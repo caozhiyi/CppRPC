@@ -136,7 +136,7 @@
     <ClCompile Include="rpc\ParsePackage.cpp" />
     <ClCompile Include="rpc\RPCClient.cpp" />
     <ClCompile Include="rpc\RPCServer.cpp" />
-    <ClCompile Include="rpc\test.cpp" />
+    <ClCompile Include="test\ServerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\Any.h" />
@@ -164,6 +164,7 @@
     <ClInclude Include="net\Timer.h" />
     <ClInclude Include="net\win\IOCP.h" />
     <ClInclude Include="net\win\WinExpendFunc.h" />
+    <ClInclude Include="rpc\AnyFunc.h" />
     <ClInclude Include="rpc\CommonStruct.h" />
     <ClInclude Include="rpc\FuncThread.h" />
     <ClInclude Include="rpc\InfoRouter.h" />

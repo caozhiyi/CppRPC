@@ -16,6 +16,9 @@
     <Filter Include="net\linux">
       <UniqueIdentifier>{cd493853-0ef5-4d2d-b8c9-7973a0717ed7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{d50c7829-5fe5-44be-835b-04eab5f5a258}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="base\Buffer.cpp">
@@ -63,9 +66,6 @@
     <ClCompile Include="rpc\ParsePackage.cpp">
       <Filter>rpc</Filter>
     </ClCompile>
-    <ClCompile Include="rpc\test.cpp">
-      <Filter>rpc</Filter>
-    </ClCompile>
     <ClCompile Include="net\linux\AcceptSocket.cpp">
       <Filter>net\linux</Filter>
     </ClCompile>
@@ -86,6 +86,9 @@
     </ClCompile>
     <ClCompile Include="rpc\RPCClient.cpp">
       <Filter>rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="test\ServerTest.cpp">
+      <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +183,9 @@
       <Filter>rpc</Filter>
     </ClInclude>
     <ClInclude Include="rpc\RPCClient.h">
+      <Filter>rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="rpc\AnyFunc.h">
       <Filter>rpc</Filter>
     </ClInclude>
   </ItemGroup>

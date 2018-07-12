@@ -60,6 +60,12 @@ private:
 	//format string. max size 4096
 	template<typename ...Args>
 	bool _SafeSprintf(bool is_str, char* buf, char* end, char* format, Args&&... args);
+
+	template <typename T, typename ...Args>
+	void _ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args);
+	template <class T>
+	void _ParseParam(std::vector<CAny>& vec, T&& end);
+
 };
 
 template<typename ...Args>
@@ -86,4 +92,14 @@ bool CParsePackage::_SafeSprintf(bool is_str, char* buf, char* end, char* format
 	}
 }
 
+template <typename T, typename ...Args>
+void CParsePackage::_ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args) {
+	vec.push_back(CAny(std::forward<T>(first)));
+	_ParseParam(vec, std::forward<Args>(args)...);
+}
+
+template <class T>
+void CParsePackage::_ParseParam(std::vector<CAny>& vec, T&& end) {
+	vec.push_back(CAny(std::forward<T>(end)));
+}
 #endif

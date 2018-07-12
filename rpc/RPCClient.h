@@ -26,11 +26,6 @@ public:
 	void _DoConnect(CMemSharePtr<CSocket>& sock, int error);
 	void _DoDisConnect(CMemSharePtr<CSocket>& sock, int error);
 
-	template <typename T, typename ...Args>
-	void _ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args);
-	template <class T>
-	void _ParseParam(std::vector<CAny>& vec, T&& end);
-
 private:
 	Call_back			_call_back;
 	CNetObject			_net;
@@ -48,7 +43,7 @@ bool CRPCClient::CallFunc(const std::string& func_name, Args&&...args) {
 	}
 
 	std::vector<CAny> vec;
-	_ParseParam(vec, std::forward<Args>(args)...);
+	_parse_package->_ParseParam(vec, std::forward<Args>(args)...);
 
 	char buf[8192] = { 0 };
 	int len = 8192;
@@ -56,17 +51,6 @@ bool CRPCClient::CallFunc(const std::string& func_name, Args&&...args) {
 		return false;
 	}
 	_socket->SyncWrite(buf, len);
-}
-
-template <typename T, typename ...Args>
-void CRPCClient::_ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args) {
-	vec.push_back(CAny(std::forward<T>(first)));
-	_ParseParam(vec, std::forward<Args>(args)...);
-}
-
-template <class T>
-void CRPCClient::_ParseParam(std::vector<CAny>& vec, T&& end) {
-	vec.push_back(CAny(std::forward<T>(end)));
 }
 
 #endif

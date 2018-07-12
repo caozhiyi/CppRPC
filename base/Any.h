@@ -20,7 +20,6 @@ public:
 		other._content = 0;
 	}
 
-
 	~CAny() noexcept {
 		delete _content;
 	}
@@ -100,7 +99,6 @@ public: // queries
 	private:
 		CHolder & operator=(const CHolder&);
 	};
-
 
 private: // representation
 	template<typename ValueType>
