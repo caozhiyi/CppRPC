@@ -5,6 +5,7 @@
 
 #include "NetObject.h"
 #include "CommonStruct.h"
+#include "ParsePackage.h"
 
 typedef std::function<void(const std::string& name, int code, std::vector<CAny>& ret)> Call_back;
 
@@ -27,6 +28,7 @@ public:
 	void _DoDisConnect(CMemSharePtr<CSocket>& sock, int error);
 
 private:
+	bool				_connected;
 	Call_back			_call_back;
 	CNetObject			_net;
 	std::shared_ptr<CInfoRouter>		_info_router;
@@ -41,9 +43,12 @@ bool CRPCClient::CallFunc(const std::string& func_name, Args&&...args) {
 	if (!_func_map.count(func_name)) {
 		return false;
 	}
+	if (!_connected) {
+		return false;
+	}
 
 	std::vector<CAny> vec;
-	_parse_package->_ParseParam(vec, std::forward<Args>(args)...);
+	_parse_package->ParseParam(vec, std::forward<Args>(args)...);
 
 	char buf[8192] = { 0 };
 	int len = 8192;

@@ -14,7 +14,8 @@ CRPCServer::~CRPCServer() {
 
 void CRPCServer::Init(int thread) {
 	for (int i = 0; i < thread; i++) {
-		_info_router->AddThread(std::shared_ptr<CFuncThread>(new CFuncThread(_info_router)));
+		auto thread = std::shared_ptr<CFuncThread>(new CFuncThread(_info_router));
+		_info_router->AddThread(thread);
 	}
 }
 
@@ -23,7 +24,7 @@ void CRPCServer::Destroy() {
 }
 
 void CRPCServer::Start(short port, std::string ip) {
-	CLog::Instance().SetLogLevel(LOG_WARN_LEVEL);
+	CLog::Instance().SetLogLevel(LOG_DEBUG_LEVEL);
 	CLog::Instance().SetLogName("CppNet.txt");
 	CLog::Instance().Start();
 
@@ -97,14 +98,16 @@ void CRPCServer::_DoRead(CMemSharePtr<CSocket>& sock, int error) {
 			auto info = sock->_pool->PoolNew<FuncCallInfo>();
 			if (_need_mutex) {
 				std::unique_lock<std::mutex> lock(_mutex);
-				if (_parse_package->PackageFuncCall(recv_buf, read_len, info->_func_name, _func_map, info->_func_param_ret)) {
+				if (_parse_package->ParseFuncCall(recv_buf + 2, read_len - 2, info->_func_name, _func_map, info->_func_param_ret)) {
+					info->_socket = sock;
 					_info_router->PushTask(info);
 				} else {
 					LOG_ERROR("parse function call request failed!");
 				}
 
 			} else {
-				if (_parse_package->PackageFuncCall(recv_buf, read_len, info->_func_name, _func_map, info->_func_param_ret)) {
+				if (_parse_package->ParseFuncCall(recv_buf + 2, read_len - 2, info->_func_name, _func_map, info->_func_param_ret)) {
+					info->_socket = sock;
 					_info_router->PushTask(info);
 				} else {
 					LOG_ERROR("parse function call request failed!");
@@ -131,6 +134,11 @@ void CRPCServer::_DoAccept(CMemSharePtr<CSocket>& sock, int error) {
 	int len = 8192;
 	if (_need_mutex) {
 		std::unique_lock<std::mutex> lock(_mutex);
+		if (!_parse_package->PackageFuncList(buf, len, _func_map)) {
+			LOG_ERROR("package functnion info failed!");
+			abort();
+		}
+	} else {
 		if (!_parse_package->PackageFuncList(buf, len, _func_map)) {
 			LOG_ERROR("package functnion info failed!");
 			abort();

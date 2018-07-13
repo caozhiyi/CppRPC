@@ -1,3 +1,4 @@
+
 #include "ParsePackage.h"
 #include "Any.h"
 
@@ -20,20 +21,14 @@ bool CParsePackage::ParseType(char* buf, int len, int& type) {
 	if (!buf) {
 		return false;
 	}
-	char* cur = buf;
-	char* next = buf;
-	char* pos = nullptr;
-
-	pos = strchr(cur, '|');
-	if (pos) {
-		next = pos + 1;
-		*pos = '\0';
-		len = len - (next - cur);
-		type = atoi(cur);
-
-	} else {
+	if (*buf < '0' || *buf > '9') {
 		return false;
 	}
+
+	char typec[1];
+	memcpy(typec, buf, 1);
+	type = atoi(typec);
+
 	return true;
 }
 
@@ -356,7 +351,7 @@ bool CParsePackage::PackageFuncRet(char* buf, int& len, int code, const std::str
 	return false;
 }
 
-bool CParsePackage::PackageFuncCall(char* buf, int& len, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& param) {
+bool CParsePackage::PackageFuncCall(char* buf, int& len, const std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& param) {
 	if (!buf) {
 		return false;
 	}
@@ -639,7 +634,7 @@ bool CParsePackage::_PackageVec(char* buf, char* end, char type, int index, std:
 		cur += strlen(cur);
 
 		for (int i = 0; i < (int)i_vec.size(); i++) {
-			if (!_SafeSprintf(false, cur, end, (i == (int)i_vec.size()-1) ? "%d|" : "%d,", i_vec[i])) {
+			if (!_SafeSprintf(false, cur, end, ((i == (int)i_vec.size()-1) ? "%d|" : "%d,"), i_vec[i])) {
 				return false;
 			}
 			cur += strlen(cur);
@@ -658,7 +653,7 @@ bool CParsePackage::_PackageVec(char* buf, char* end, char type, int index, std:
 		cur += strlen(cur);
 
 		for (int i = 0; i < (int)c_vec.size(); i++) {
-			if (!_SafeSprintf(false, cur, end, (i == (int)c_vec.size() - 1) ? "%c|" : "%c,", c_vec[i])) {
+			if (!_SafeSprintf(false, cur, end, ((i == (int)c_vec.size() - 1) ? "%c|" : "%c,"), c_vec[i])) {
 				return false;
 			}
 			cur += strlen(cur);
@@ -677,7 +672,7 @@ bool CParsePackage::_PackageVec(char* buf, char* end, char type, int index, std:
 		cur += strlen(cur);
 
 		for (int i = 0; i < (int)s_vec.size(); i++) {
-			if (!_SafeSprintf(true, cur, end, (i == (int)s_vec.size() - 1) ? "%s|" : "%s,", s_vec[i].c_str())) {
+			if (!_SafeSprintf(true, cur, end, ((i == (int)s_vec.size() - 1) ? "%s|" : "%s,"), s_vec[i].c_str())) {
 				return false;
 			}
 			cur += strlen(cur);
@@ -696,7 +691,7 @@ bool CParsePackage::_PackageVec(char* buf, char* end, char type, int index, std:
 		cur += strlen(cur);
 
 		for (int i = 0; i < (int)d_vec.size(); i++) {
-			if (!_SafeSprintf(true, cur, end, (i == (int)d_vec.size() - 1) ? "%lld|" : "%lld,", d_vec[i])) {
+			if (!_SafeSprintf(true, cur, end, ((i == (int)d_vec.size() - 1) ? "%lld|" : "%lld,"), d_vec[i])) {
 				return false;
 			}
 			cur += strlen(cur);
@@ -715,7 +710,7 @@ bool CParsePackage::_PackageVec(char* buf, char* end, char type, int index, std:
 		cur += strlen(cur);
 
 		for (int i = 0; i < (int)l_vec.size(); i++) {
-			if (!_SafeSprintf(true, cur, end, (i == (int)l_vec.size() - 1) ? "%ld|" : "%ld,", l_vec[i])) {
+			if (!_SafeSprintf(true, cur, end, ((i == (int)l_vec.size() - 1) ? "%ld|" : "%ld,"), l_vec[i])) {
 				return false;
 			}
 			cur += strlen(cur);
@@ -734,7 +729,7 @@ bool CParsePackage::_PackageVec(char* buf, char* end, char type, int index, std:
 		cur += strlen(cur);
 
 		for (int i = 0; i < (int)b_vec.size(); i++) {
-			if (!_SafeSprintf(true, cur, end, (i == (int)b_vec.size() - 1) ? "%d|" : "%d,", b_vec[i]?1:0)) {
+			if (!_SafeSprintf(true, cur, end, ((i == (int)b_vec.size() - 1) ? "%d|" : "%d,"), b_vec[i]?1:0)) {
 				return false;
 			}
 			cur += strlen(cur);

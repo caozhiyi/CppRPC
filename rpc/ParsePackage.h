@@ -49,8 +49,13 @@ public:
 	bool ParseFuncList(char* buf, int len, std::map<std::string, std::string>& map);
 	//package for every type
 	bool PackageFuncRet(char* buf, int& len, int code, const std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& ret);
-	bool PackageFuncCall(char* buf, int& len, std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& param);
+	bool PackageFuncCall(char* buf, int& len, const std::string& func_name, const std::map<std::string, std::string>& func_str_map, std::vector<CAny>& param);
 	bool PackageFuncList(char* buf, int& len, std::map<std::string, std::string>& func_map);
+
+	template <typename T, typename ...Args>
+	void ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args);
+	template <class T>
+	void ParseParam(std::vector<CAny>& vec, T&& end);
 
 private:
 	bool _ParseParam(char* buf, char type, std::vector<CAny>& res);
@@ -59,17 +64,11 @@ private:
 
 	//format string. max size 4096
 	template<typename ...Args>
-	bool _SafeSprintf(bool is_str, char* buf, char* end, char* format, Args&&... args);
-
-	template <typename T, typename ...Args>
-	void _ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args);
-	template <class T>
-	void _ParseParam(std::vector<CAny>& vec, T&& end);
-
+	bool _SafeSprintf(bool is_str, char* buf, char* end, const char* format, Args&&... args);
 };
 
 template<typename ...Args>
-bool CParsePackage::_SafeSprintf(bool is_str, char* buf, char* end, char* format, Args&&... args) {
+bool CParsePackage::_SafeSprintf(bool is_str, char* buf, char* end, const char* format, Args&&... args) {
 	if (is_str) {
 		char temp_buf[4096] = { 0 };
 		sprintf(temp_buf, format, std::forward<Args>(args)...);
@@ -93,13 +92,13 @@ bool CParsePackage::_SafeSprintf(bool is_str, char* buf, char* end, char* format
 }
 
 template <typename T, typename ...Args>
-void CParsePackage::_ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args) {
+void CParsePackage::ParseParam(std::vector<CAny>& vec, T&& first, Args&&... args) {
 	vec.push_back(CAny(std::forward<T>(first)));
-	_ParseParam(vec, std::forward<Args>(args)...);
+	ParseParam(vec, std::forward<Args>(args)...);
 }
 
 template <class T>
-void CParsePackage::_ParseParam(std::vector<CAny>& vec, T&& end) {
+void CParsePackage::ParseParam(std::vector<CAny>& vec, T&& end) {
 	vec.push_back(CAny(std::forward<T>(end)));
 }
 #endif

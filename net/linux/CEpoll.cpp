@@ -198,13 +198,13 @@ void CEpoll::ProcessEvent() {
 		if (res > 0) {
 			LOG_DEBUG("epoll_wait get events! num :%d, TheadId : %d", res, std::this_thread::get_id());
 			_DoEvent(event_vec, res);
-			_DoTaskList()
+			_DoTaskList();
 
 		} else {
 			if (!timer_vec.empty()) {
 				_DoTimeoutEvent(timer_vec);
 			}
-			_DoTaskList()
+			_DoTaskList();
 		}
 	}
 

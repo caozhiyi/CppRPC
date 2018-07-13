@@ -12,7 +12,7 @@ void CFuncThread::Run() {
 		auto t = _Pop();
 		if (t) {
 			if (CallFunc(t->_func_name, t->_func_param_ret)){
-				_func_router->PushTask(t);
+				_func_router->PushRet(t);
 			}
 
 		} else {

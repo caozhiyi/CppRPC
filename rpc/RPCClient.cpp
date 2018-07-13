@@ -4,7 +4,7 @@
 #include "ParsePackage.h"
 #include "Log.h"
 
-CRPCClient::CRPCClient() {
+CRPCClient::CRPCClient() : _connected(false){
 }
 
 
@@ -13,7 +13,7 @@ CRPCClient::~CRPCClient() {
 
 //start work
 void CRPCClient::Start(short port, std::string ip) {
-	CLog::Instance().SetLogLevel(LOG_WARN_LEVEL);
+	CLog::Instance().SetLogLevel(LOG_DEBUG_LEVEL);
 	CLog::Instance().SetLogName("CppNet.txt");
 	CLog::Instance().Start();
 
@@ -24,12 +24,13 @@ void CRPCClient::Start(short port, std::string ip) {
 	_net.SetReadCallback(std::bind(&CRPCClient::_DoRead, this, std::placeholders::_1, std::placeholders::_2));
 	_net.SetDisconnectionCallback(std::bind(&CRPCClient::_DoDisConnect, this, std::placeholders::_1, std::placeholders::_2));
 
-	auto sock = _net.Connection(port, ip);
+	_socket = _net.Connection(port, ip, "\r\n\r\n", strlen("\r\n\r\n"));
+	
 	//net.MainLoop();
 	//net.Dealloc();
-	_net.Join();
-	CLog::Instance().Stop();
-	CLog::Instance().Join();
+	//_net.Join();
+	//CLog::Instance().Stop();
+	//CLog::Instance().Join();
 }
 
 void CRPCClient::SetCallBack(Call_back& func) {
@@ -40,12 +41,12 @@ void CRPCClient::_DoRead(CMemSharePtr<CSocket>& sock, int error) {
 	if (error != EVENT_ERROR_NO) {
 		return;
 	}
-
 	char recv_buf[8192] = { 0 };
 	int get_len = 8192;
 	int need_len = 0;
+	int recv_len = 0;
 	for (;;) {
-		sock->_read_event->_buffer->ReadUntil(recv_buf, get_len, "\r\n\r\n", strlen("\r\n\r\n"), need_len);
+		get_len = sock->_read_event->_buffer->ReadUntil(recv_buf, 8192, "\r\n\r\n", strlen("\r\n\r\n"), need_len);
 		if (get_len == 0) {
 			break;
 		}
@@ -60,16 +61,18 @@ void CRPCClient::_DoRead(CMemSharePtr<CSocket>& sock, int error) {
 			break;
 		}
 		if (type & FUNCTION_RET) {
-			if (!_parse_package->ParseFuncRet(recv_buf, get_len, code, name, _func_map, vec)) {
+			if (!_parse_package->ParseFuncRet(recv_buf + 2, get_len - 2, code, name, _func_map, vec)) {
 				if (_call_back) {
 					_call_back(name, PARSE_FUNC_ERROR, vec);
 				}
 				break;
 			}
-			_call_back(name, code, vec);
+			if (_call_back) {
+				_call_back(name, code, vec);
+			}
 
 		} else if (type & FUNCTION_INFO) {
-			if (!_parse_package->ParseFuncList(recv_buf, get_len, _func_map)) {
+			if (!_parse_package->ParseFuncList(recv_buf + 2, get_len - 2, _func_map)) {
 				if (_call_back) {
 					_call_back(name, PARSE_FUNC_ERROR, vec);
 				}
@@ -93,6 +96,7 @@ void CRPCClient::_DoWrite(CMemSharePtr<CSocket>& sock, int error) {
 }
 
 void CRPCClient::_DoConnect(CMemSharePtr<CSocket>& sock, int error) {
+	_connected = true;
 	sock->SyncRead();
 }
 

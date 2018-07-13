@@ -5,6 +5,7 @@
 #include <vector>
 #include <mutex>
 #include <atomic>
+#include <memory>
 
 #include "Any.h"
 #include "TaskQueue.h"
@@ -34,6 +35,7 @@ private:
 	CTaskQueue<FuncCallInfo*>	_out_task_list;
 	
 	std::atomic_int								_curent_index;
+	std::mutex									_mutex;
 	std::vector<std::shared_ptr<CFuncThread>>	_func_thread_vec;
 };
 

@@ -144,6 +144,7 @@ CMemSharePtr<CSocket> CNetObject::Connection(int port, std::string ip, char* buf
 		sock->SetReadCallBack(std::bind(&CNetObject::_ReadFunction, this, std::placeholders::_1, std::placeholders::_2));
 	};
 	sock->SetReadCallBack(func);
+	sock->SyncConnection(ip, port);
 #endif
 	return sock;
 }
@@ -195,7 +196,6 @@ void CNetObject::_ReadFunction(CMemSharePtr<CEventHandler>& event, int err) {
 	if (!event) {
 		return;
 	}
-	LOG_DEBUG("err: %d", err);
 	auto socket_ptr = event->_client_socket.Lock();
 	if (err & EVENT_CONNECT && _connection_call_back) {
 		err &= ~EVENT_CONNECT;
