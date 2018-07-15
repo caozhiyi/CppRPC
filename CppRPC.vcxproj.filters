@@ -87,7 +87,7 @@
     <ClCompile Include="rpc\RPCClient.cpp">
       <Filter>rpc</Filter>
     </ClCompile>
-    <ClCompile Include="test\ServerTest.cpp">
+    <ClCompile Include="test\ClientTest.cpp">
       <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>

@@ -15,9 +15,9 @@ Call_back func = Add1CallBack;
 int main() {
 	CRPCClient client;
 	client.SetCallBack(func);
-	client.Start(8951, "172.16.81.250");
+	client.Start(8951, "192.168.2.105");
 	for (;;) {
+		CRunnable::Sleep(1000);
 		client.CallFunc("Add1", 100, 200);
-		CRunnable::Sleep(2000);
 	}
 }

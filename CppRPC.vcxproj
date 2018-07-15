@@ -136,7 +136,7 @@
     <ClCompile Include="rpc\ParsePackage.cpp" />
     <ClCompile Include="rpc\RPCClient.cpp" />
     <ClCompile Include="rpc\RPCServer.cpp" />
-    <ClCompile Include="test\ServerTest.cpp" />
+    <ClCompile Include="test\ClientTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base\Any.h" />

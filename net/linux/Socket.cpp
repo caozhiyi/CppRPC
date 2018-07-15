@@ -78,11 +78,19 @@ void CSocket::SyncWrite(char* src, int len) {
 	if (!_write_event->_buffer) {
 		_write_event->_buffer = MakeNewSharedPtr<CBuffer>(_pool.get(), _pool);
 	}
-	_write_event->_buffer->Write(src, len);
 
 	if (!_write_event->_client_socket) {
 		_write_event->_client_socket = _read_event->_client_socket;
 	}
+
+	//try send
+	_write_event->_buffer->Write(src, len);
+	_Send(_write_event);
+	//send complete!
+	if (_write_event->_buffer->GetCanReadSize() == 0) {
+		return;
+	}
+
 	if (_event_actions) {
 		_write_event->_event_flag_set |= EVENT_WRITE;
 		_event_actions->AddSendEvent(_write_event);
@@ -119,7 +127,6 @@ void CSocket::SyncConnection(const std::string& ip, short port) {
 
 	//craete socket
 	_sock = socket(PF_INET, SOCK_STREAM, 0);
-	SetSocketNoblocking(_sock);
 
 	if (_event_actions) {
 		_read_event->_event_flag_set |= EVENT_CONNECT;
@@ -204,8 +211,13 @@ void CSocket::SyncWrite(unsigned int interval, char* src, int len) {
 	if (!_write_event->_buffer) {
 		_write_event->_buffer = MakeNewSharedPtr<CBuffer>(_pool.get(), _pool);
 	}
+	//try send
 	_write_event->_buffer->Write(src, len);
-
+	_Send(_write_event);
+	//send complete!
+	if (_write_event->_buffer->GetCanReadSize() == 0) {
+		return;
+	}
 	if (_event_actions) {
 		_write_event->_event_flag_set |= EVENT_WRITE;
 		_event_actions->AddSendEvent(_write_event);
