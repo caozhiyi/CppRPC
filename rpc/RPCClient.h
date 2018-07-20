@@ -7,7 +7,7 @@
 #include "CommonStruct.h"
 #include "ParsePackage.h"
 
-typedef std::function<void(const std::string& name, int code, std::vector<CAny>& ret)> Call_back;
+typedef std::function<void(int code, std::vector<CAny>& ret)> Call_back;
 
 class CInfoRouter;
 class CParsePackage;
@@ -18,7 +18,7 @@ public:
 	//start work
 	void Start(short port, std::string ip);
 	//set call back when rpc server response called;
-	void SetCallBack(Call_back& func);
+	void SetCallBack(const std::string& func_name, Call_back& func);
 	template<typename...Args>
 	bool CallFunc(const std::string& func_name, Args&&...args);
 public:
@@ -29,13 +29,13 @@ public:
 
 private:
 	bool				_connected;
-	Call_back			_call_back;
 	CNetObject			_net;
 	std::shared_ptr<CInfoRouter>		_info_router;
 	std::shared_ptr<CParsePackage>		_parse_package;
 
 	CMemSharePtr<CSocket>				_socket;
-	std::map<std::string, std::string>	_func_map;
+	std::map<std::string, Call_back>	_func_call_map;
+	std::map<std::string, std::string>  _func_map;
 };
 
 template<typename...Args>
@@ -43,9 +43,13 @@ bool CRPCClient::CallFunc(const std::string& func_name, Args&&...args) {
 	if (!_func_map.count(func_name)) {
 		return false;
 	}
+	if (!_func_call_map.count(func_name)) {
+		return false;
+	}
 	if (!_connected) {
 		return false;
 	}
+
 
 	std::vector<CAny> vec;
 	_parse_package->ParseParam(vec, std::forward<Args>(args)...);

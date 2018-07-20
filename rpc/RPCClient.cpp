@@ -33,8 +33,8 @@ void CRPCClient::Start(short port, std::string ip) {
 	//CLog::Instance().Join();
 }
 
-void CRPCClient::SetCallBack(Call_back& func) {
-	_call_back = func;
+void CRPCClient::SetCallBack(const std::string& func_name, Call_back& func) {
+	_func_call_map[func_name] = func;
 }
 
 void CRPCClient::_DoRead(CMemSharePtr<CSocket>& sock, int error) {
@@ -55,32 +55,32 @@ void CRPCClient::_DoRead(CMemSharePtr<CSocket>& sock, int error) {
 		std::string name;
 		int code = NO_ERROR;
 		if (!_parse_package->ParseType(recv_buf, get_len, type)) {
-			if (_call_back) {
-				_call_back(name, PARAM_TYPE_ERROR, vec);
+			if (_func_call_map.count(name)) {
+				_func_call_map[name](PARAM_TYPE_ERROR, vec);
 			}
 			break;
 		}
 		if (type & FUNCTION_RET) {
 			if (!_parse_package->ParseFuncRet(recv_buf + 2, get_len - 2, code, name, _func_map, vec)) {
-				if (_call_back) {
-					_call_back(name, PARSE_FUNC_ERROR, vec);
+				if (_func_call_map.count(name)) {
+					_func_call_map[name](PARSE_FUNC_ERROR, vec);
 				}
 				break;
 			}
-			if (_call_back) {
-				_call_back(name, code, vec);
+			if (_func_call_map.count(name)) {
+				_func_call_map[name](code, vec);
 			}
 
 		} else if (type & FUNCTION_INFO) {
 			if (!_parse_package->ParseFuncList(recv_buf + 2, get_len - 2, _func_map)) {
-				if (_call_back) {
-					_call_back(name, PARSE_FUNC_ERROR, vec);
+				if (_func_call_map.count(name)) {
+					_func_call_map[name](PARSE_FUNC_ERROR, vec);
 				}
 				break;
 
 			} else {
-				if (_call_back) {
-					_call_back(name, PARAM_TYPE_ERROR, vec);
+				if (_func_call_map.count(name)) {
+					_func_call_map[name](PARAM_TYPE_ERROR, vec);
 				}
 				break;
 			}
