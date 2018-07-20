@@ -138,10 +138,11 @@ CMemSharePtr<CSocket> CNetObject::Connection(int port, std::string ip, char* buf
 	sock->SyncConnection(ip, port, buf, buf_len);
 #else
 	auto func = [buf, buf_len, sock, this](CMemSharePtr<CEventHandler>& event, int err) {
-		if (err = EVENT_ERROR_NO) {
+		if (err & EVENT_ERROR_NO) {
 			sock->SyncWrite(buf, buf_len);
 		}
 		sock->SetReadCallBack(std::bind(&CNetObject::_ReadFunction, this, std::placeholders::_1, std::placeholders::_2));
+		_ReadFunction(event, err);
 	};
 	sock->SetReadCallBack(func);
 	sock->SyncConnection(ip, port);

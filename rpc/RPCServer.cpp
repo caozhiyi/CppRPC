@@ -79,7 +79,7 @@ bool CRPCServer::RemoveFunc(std::string name) {
 }
 
 void CRPCServer::_DoRead(CMemSharePtr<CSocket>& sock, int error) {
-	if (error != EVENT_ERROR_NO) {
+	if (!(error & EVENT_ERROR_NO)) {
 		return;
 	}
 	int get_len = 0;
@@ -145,6 +145,8 @@ void CRPCServer::_DoAccept(CMemSharePtr<CSocket>& sock, int error) {
 		}
 	}
 	sock->SyncWrite(buf, len);
+	sock->SyncRead();
+	CRunnable::Sleep(10000);
 	sock->SyncRead();
 }
 

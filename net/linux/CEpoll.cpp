@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <signal.h>
 #include "CEpoll.h"
 #include "OSInfo.h"
 #include "Log.h"
@@ -12,7 +13,8 @@
 #include "LinuxFunc.h"
 
 enum EPOLL_CODE {
-	EXIT_EPOLL = 0
+	EXIT_EPOLL = 1,
+	WEAK_EPOLL = 0
 };
 
 CEpoll::CEpoll() : _run(true) {
@@ -24,6 +26,11 @@ CEpoll::~CEpoll() {
 }
 
 bool CEpoll::Init() {
+	//Disable  SIGPIPE signal
+	sigset_t set;
+	sigprocmask(SIG_SETMASK, NULL, &set);
+	sigaddset(&set, SIGPIPE);
+	sigprocmask(SIG_SETMASK, &set, NULL);
 	//get epoll handle. the param is invalid since linux 2.6.8
 	_epoll_handler = epoll_create(1500);
 	if (_epoll_handler == -1) {
@@ -35,7 +42,7 @@ bool CEpoll::Init() {
 		return false;
 	}
 	_pipe_content.events |= EPOLLIN;
-	_pipe_content.data.u32 = EXIT_EPOLL;
+	_pipe_content.data.ptr = (void*)WEAK_EPOLL;
 	int res = epoll_ctl(_epoll_handler, EPOLL_CTL_ADD, _pipe[0], &_pipe_content);
 	if (res == -1) {
 		LOG_ERROR("add event to epoll faild! error :%d", errno);
@@ -46,6 +53,9 @@ bool CEpoll::Init() {
 
 bool CEpoll::Dealloc() {
 	_run = false;
+	_pipe_content.events |= EPOLLIN;
+	_pipe_content.data.ptr = (void*)EXIT_EPOLL;
+	epoll_ctl(_epoll_handler, EPOLL_CTL_ADD, _pipe[0], &_pipe_content);
 	WakeUp();
 	return true;
 }
@@ -66,8 +76,7 @@ bool CEpoll::AddSendEvent(CMemSharePtr<CEventHandler>& event) {
 			if (socket_ptr->IsInActions()) {
 				res = _ModifyEvent(event, EPOLLOUT, socket_ptr->GetSocket());
 
-			}
-			else {
+			} else {
 				res = _AddEvent(event, EPOLLOUT, socket_ptr->GetSocket());
 			}
 		}
@@ -138,8 +147,9 @@ bool CEpoll::AddConnection(CMemSharePtr<CEventHandler>& event, const std::string
 		addr.sin_family = AF_INET;
 		addr.sin_port = htons(port);
 		addr.sin_addr.s_addr = inet_addr(ip.c_str());
-
+		//block here in linux
 		int res = connect(socket_ptr->GetSocket(), (sockaddr *)&addr, sizeof(addr));
+		SetSocketNoblocking(socket_ptr->GetSocket());
 		if (res == 0 || errno == EINPROGRESS) {
 			//res = _AddEvent(event, EPOLLOUT, socket_ptr->GetSocket());
 			socket_ptr->_Recv(socket_ptr->_read_event);
@@ -327,6 +337,10 @@ void CEpoll::_DoEvent(std::vector<epoll_event>& event_vec, int num) {
 			_run = false;
 		}
 		sock = event_vec[i].data.ptr;
+		if (sock == (void*)EXIT_EPOLL) {
+			_run = false;
+			continue;
+		}
 		if (!sock) {
 			LOG_WARN("the event is nullptr, index : %d", i);
 			continue;

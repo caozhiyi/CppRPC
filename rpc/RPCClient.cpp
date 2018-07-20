@@ -24,8 +24,8 @@ void CRPCClient::Start(short port, std::string ip) {
 	_net.SetReadCallback(std::bind(&CRPCClient::_DoRead, this, std::placeholders::_1, std::placeholders::_2));
 	_net.SetDisconnectionCallback(std::bind(&CRPCClient::_DoDisConnect, this, std::placeholders::_1, std::placeholders::_2));
 
-	_socket = _net.Connection(port, ip, "\r\n\r\n", strlen("\r\n\r\n"));
-	
+	//_socket = _net.Connection(port, ip, "\r\n\r\n", strlen("\r\n\r\n"));
+	_socket = _net.Connection(port, ip);
 	//net.MainLoop();
 	//net.Dealloc();
 	//_net.Join();
@@ -97,6 +97,10 @@ void CRPCClient::_DoWrite(CMemSharePtr<CSocket>& sock, int error) {
 
 void CRPCClient::_DoConnect(CMemSharePtr<CSocket>& sock, int error) {
 	_connected = true;
+//#ifdef __linux__
+//	CRunnable::Sleep(1000);//connect may delay in linux
+//#endif // !__linux__
+	sock->SyncWrite("\r\n\r\n", strlen("\r\n\r\n"));
 	sock->SyncRead();
 }
 
