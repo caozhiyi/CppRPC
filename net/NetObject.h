@@ -9,6 +9,7 @@
 #include "PoolSharedPtr.h"
 #include "EventHandler.h"
 #include "MemaryPool.h"
+#include "Timer.h"
 
 typedef std::function<void(CMemSharePtr<CSocket>&, int err)> call_back;
 
@@ -28,6 +29,8 @@ public:
 	void SetReadCallback(const call_back& func);
 	void SetWriteCallback(const call_back& func);
 	void SetDisconnectionCallback(const call_back& func);
+    unsigned int SetTimer(unsigned int interval, const std::function<void(void*)>& func, void* param = nullptr, bool always = false);
+    void RemoveTimer(unsigned int timer_id);
 
 	//server
 	void SetAcceptCallback(const call_back& func);
@@ -58,6 +61,7 @@ private:
 	std::map<unsigned int, CMemSharePtr<CAcceptSocket>>			_accept_socket;
 	std::map<unsigned int, CMemSharePtr<CSocket>>				_socket_map;
 	std::map<std::thread::id, std::shared_ptr<CEventActions>>	_actions_map;
+    std::map<unsigned int, std::weak_ptr<CEventActions>>        _timer_actions_map;
 };
 
 #endif
